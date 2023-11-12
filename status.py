@@ -2,6 +2,7 @@ import asyncio
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
+import os
 import signal
 import subprocess
 
@@ -25,6 +26,10 @@ def update(statuses, i, silent=False):
     if not silent: print_status(statuses)
 
 async def main():
+    # write pid file:
+    with open(f'/run/user/{os.getuid()}/sway_bar_status.pid', 'w') as f:
+        f.write(str(os.getpid()))
+
     # initial values:
     statuses = ["" for _ in COMMANDS]
     for i in range(len(COMMANDS)):
