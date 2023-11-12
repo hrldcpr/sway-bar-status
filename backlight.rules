@@ -1,0 +1,4 @@
+# install in /etc/udev/rules.d/ and then restart
+# make backlight brightness file writable by members of the video group:
+ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chgrp video $sys$devpath/brightness", RUN+="/bin/chmod g+w $sys$devpath/brightness"
+# (not clear why a rule using GROUP="video", MODE="0664" doesn't work)

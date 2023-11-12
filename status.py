@@ -6,9 +6,11 @@ import os
 import signal
 import subprocess
 
+HERE = os.path.dirname(__file__)
+
 COMMANDS = (
     (r"pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+%' | head -1", " volume - "),
-    (r"bash ~/.config/sway/brightness.bash", "% brightness - "),
+    (rf"bash {HERE}/brightness.bash", "% brightness - "),
     (r"cat /sys/class/power_supply/BAT0/capacity", "% "),
     (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " - "),
     (r"date +'%m/%d %-I:%M:%S %P'", ""),
