@@ -18,7 +18,7 @@ def run_command(x):
     return y.stdout.decode('utf-8').strip()
 
 def print_status(statuses):
-    print("".join("".join((status, suffix)) for status, (_, suffix) in zip(statuses, COMMANDS)))
+    print("".join("".join((status, suffix)) for status, (_, suffix) in zip(statuses, COMMANDS)), flush=True)
 
 def update(statuses, i, silent=False):
     statuses[i] = run_command(COMMANDS[i][0])
