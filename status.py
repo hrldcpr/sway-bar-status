@@ -16,6 +16,8 @@ COMMANDS = (
     (r"date +'%m/%d %-I:%M:%S %P'", ""),
 )
 
+BATTERY_PERIOD = 10 # seconds
+
 def run_command(x):
     y = subprocess.run(x, shell=True, capture_output=True)
     return y.stdout.decode('utf-8').strip()
@@ -26,6 +28,24 @@ def print_status(statuses):
 def update(statuses, i, silent=False):
     statuses[i] = run_command(COMMANDS[i][0])
     if not silent: print_status(statuses)
+
+async def date_updater(statuses):
+    # run date command at the beginning of every minute
+    i, = (i for i, (command, _) in enumerate(COMMANDS) if command.startswith('date'))
+    while True:
+        now = datetime.now()
+        seconds = now.second + now.microsecond/1_000_000
+        await asyncio.sleep(60 - seconds)
+        update(statuses, i)
+
+async def battery_updater(statuses):
+    # update battery periodically
+    # TODO get a signal when charger is (un)plugged?
+    ixs = tuple(i for i, (command, _) in enumerate(COMMANDS) if 'power_supply' in command)
+    while True:
+        await asyncio.sleep(BATTERY_PERIOD)
+        for i in ixs: update(statuses, i, silent=True)
+        print_status(statuses)
 
 async def main():
     # write pid file:
@@ -44,12 +64,6 @@ async def main():
         # we use partial because lambdas would all capture the final value of i, not the current value
         loop.add_signal_handler(signal.SIGRTMIN + i + 1, partial(update, statuses, i))
 
-    # run the date command at the beginning of every minute:
-    i_date, = (i for i, (command, _) in enumerate(COMMANDS) if command.startswith('date'))
-    while True:
-        now = datetime.now()
-        seconds = now.second + now.microsecond/1_000_000
-        await asyncio.sleep(60 - seconds)
-        update(statuses, i_date)
+    await asyncio.gather(date_updater(statuses), battery_updater(statuses))
 
 asyncio.run(main())
