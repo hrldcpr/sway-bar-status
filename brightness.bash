@@ -19,6 +19,6 @@ elif [ "$1" = "up" ]; then
     if ((brightness > max_brightness)); then brightness=$max_brightness; fi
     echo "$brightness" > /sys/class/backlight/intel_backlight/brightness
     . "$(dirname "$0")"/signal.bash $signal
+else
+    echo $((100 * brightness / max_brightness))
 fi
-
-echo $((100 * brightness / max_brightness))
