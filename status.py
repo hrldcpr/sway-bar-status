@@ -14,7 +14,7 @@ COMMANDS = (
     (rf"bash {HERE}/brightness.bash", "% brightness - "),
     (r"cat /sys/class/power_supply/BAT0/capacity", "% "),
     (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " - "),
-    (r"date +'%m/%d %-I:%M:%S %P'", ""),
+    (r"date +'%m/%d %-I:%M%P'", " "),
 )
 
 BATTERY_PERIOD = 10  # seconds
