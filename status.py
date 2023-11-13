@@ -17,11 +17,13 @@ COMMANDS = (
     (r"date +'%m/%d %-I:%M:%S %P'", ""),
 )
 
-BATTERY_PERIOD = 10 # seconds
+BATTERY_PERIOD = 10  # seconds
+
 
 def run_command(x):
     y = subprocess.run(x, shell=True, capture_output=True)
-    return y.stdout.decode('utf-8').strip()
+    return y.stdout.decode("utf-8").strip()
+
 
 def print_status(statuses):
     parts = chain.from_iterable(
@@ -32,29 +34,36 @@ def print_status(statuses):
 
 def update(statuses, i, silent=False):
     statuses[i] = run_command(COMMANDS[i][0])
-    if not silent: print_status(statuses)
+    if not silent:
+        print_status(statuses)
+
 
 async def date_updater(statuses):
     # run date command at the beginning of every minute
-    i, = (i for i, (command, _) in enumerate(COMMANDS) if command.startswith('date'))
+    (i,) = (i for i, (command, _) in enumerate(COMMANDS) if command.startswith("date"))
     while True:
         now = datetime.now()
-        seconds = now.second + now.microsecond/1_000_000
+        seconds = now.second + now.microsecond / 1_000_000
         await asyncio.sleep(60 - seconds)
         update(statuses, i)
+
 
 async def battery_updater(statuses):
     # update battery periodically
     # TODO get a signal when charger is (un)plugged?
-    ixs = tuple(i for i, (command, _) in enumerate(COMMANDS) if 'power_supply' in command)
+    ixs = tuple(
+        i for i, (command, _) in enumerate(COMMANDS) if "power_supply" in command
+    )
     while True:
         await asyncio.sleep(BATTERY_PERIOD)
-        for i in ixs: update(statuses, i, silent=True)
+        for i in ixs:
+            update(statuses, i, silent=True)
         print_status(statuses)
+
 
 async def main():
     # write pid file:
-    with open(f'/run/user/{os.getuid()}/sway_bar_status.pid', 'w') as f:
+    with open(f"/run/user/{os.getuid()}/sway_bar_status.pid", "w") as f:
         f.write(str(os.getpid()))
 
     # initial values:
@@ -70,5 +79,6 @@ async def main():
         loop.add_signal_handler(signal.SIGRTMIN + i + 1, partial(update, statuses, i))
 
     await asyncio.gather(date_updater(statuses), battery_updater(statuses))
+
 
 asyncio.run(main())
