@@ -12,8 +12,9 @@ HERE = os.path.dirname(__file__)
 COMMANDS = (
     (rf"bash {HERE}/volume.bash", " volume - "),
     (rf"bash {HERE}/brightness.bash", "% brightness - "),
-    (r"cat /sys/class/power_supply/BAT0/capacity", "% "),
-    (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " - "),
+    (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " "),
+    (r"cat /sys/class/power_supply/BAT0/capacity", "% - "),
+    (r"cut -d' ' -f1 /proc/loadavg", " load - "),
     (r"cat /sys/firmware/acpi/platform_profile", " mode - "),
     (r"date +'%m/%d %-I:%M%P'", " "),
 )
@@ -56,7 +57,7 @@ async def power_updater(statuses):
     ixs = tuple(
         i
         for i, (command, _) in enumerate(COMMANDS)
-        if "/power_supply/" in command or "/acpi/" in command
+        if "/power_supply/" in command or "/acpi/" in command or "/load" in command
     )
     while True:
         await asyncio.sleep(POWER_PERIOD)
