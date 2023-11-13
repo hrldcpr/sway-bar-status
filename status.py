@@ -63,7 +63,7 @@ async def battery_updater(statuses):
 
 async def main():
     # write pid file:
-    with open(f"/run/user/{os.getuid()}/sway_bar_status.pid", "w") as f:
+    with open(f"/run/user/{os.getuid()}/sway-bar-status.pid", "w") as f:
         f.write(str(os.getpid()))
 
     # initial values:
