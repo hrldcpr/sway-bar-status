@@ -82,6 +82,8 @@ async def main():
         # we use partial because lambdas would all capture the final value of i, not the current value
         loop.add_signal_handler(signal.SIGRTMIN + i + 1, partial(update, statuses, i))
 
+    # TODO update everything upon waking from suspend
+
     await asyncio.gather(date_updater(statuses), power_updater(statuses))
 
 
