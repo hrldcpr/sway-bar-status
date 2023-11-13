@@ -14,10 +14,11 @@ COMMANDS = (
     (rf"bash {HERE}/brightness.bash", "% brightness - "),
     (r"cat /sys/class/power_supply/BAT0/capacity", "% "),
     (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " - "),
+    (r"cat /sys/firmware/acpi/platform_profile", " mode - "),
     (r"date +'%m/%d %-I:%M%P'", " "),
 )
 
-BATTERY_PERIOD = 10  # seconds
+POWER_PERIOD = 10  # seconds
 
 
 def run_command(x):
@@ -48,14 +49,17 @@ async def date_updater(statuses):
         update(statuses, i)
 
 
-async def battery_updater(statuses):
-    # update battery periodically
+async def power_updater(statuses):
+    # update power periodically
     # TODO get a signal when charger is (un)plugged?
+    # TODO get a signal when Fn+L/M/H are pressed?
     ixs = tuple(
-        i for i, (command, _) in enumerate(COMMANDS) if "power_supply" in command
+        i
+        for i, (command, _) in enumerate(COMMANDS)
+        if "/power_supply/" in command or "/acpi/" in command
     )
     while True:
-        await asyncio.sleep(BATTERY_PERIOD)
+        await asyncio.sleep(POWER_PERIOD)
         for i in ixs:
             update(statuses, i, silent=True)
         print_status(statuses)
@@ -78,7 +82,7 @@ async def main():
         # we use partial because lambdas would all capture the final value of i, not the current value
         loop.add_signal_handler(signal.SIGRTMIN + i + 1, partial(update, statuses, i))
 
-    await asyncio.gather(date_updater(statuses), battery_updater(statuses))
+    await asyncio.gather(date_updater(statuses), power_updater(statuses))
 
 
 asyncio.run(main())
