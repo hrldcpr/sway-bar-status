@@ -2,6 +2,7 @@ import asyncio
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
+from itertools import chain
 import os
 import signal
 import subprocess
@@ -23,7 +24,11 @@ def run_command(x):
     return y.stdout.decode('utf-8').strip()
 
 def print_status(statuses):
-    print("".join("".join((status, suffix)) for status, (_, suffix) in zip(statuses, COMMANDS)), flush=True)
+    parts = chain.from_iterable(
+        (status, suffix) for status, (_, suffix) in zip(statuses, COMMANDS)
+    )
+    print("".join(parts), flush=True)
+
 
 def update(statuses, i, silent=False):
     statuses[i] = run_command(COMMANDS[i][0])
