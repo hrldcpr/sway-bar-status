@@ -9,7 +9,7 @@ import subprocess
 HERE = os.path.dirname(__file__)
 
 COMMANDS = (
-    (r"pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+%' | head -1", " volume - "),
+    (rf"bash {HERE}/volume.bash", " volume - "),
     (rf"bash {HERE}/brightness.bash", "% brightness - "),
     (r"cat /sys/class/power_supply/BAT0/capacity", "% "),
     (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " - "),
