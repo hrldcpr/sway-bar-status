@@ -3,7 +3,7 @@
 
 signal=2 # see status.py
 
-min_brightness=1
+min_brightness=0
 max_brightness=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 step=$((max_brightness / 10)) # 10%
 
@@ -15,7 +15,7 @@ if [ "$1" = "down" ]; then
     echo "$brightness" > /sys/class/backlight/intel_backlight/brightness
     . "$(dirname "$0")"/signal.bash $signal
 elif [ "$1" = "up" ]; then
-    brightness=$((brightness + step))
+    brightness=$((brightness + step + 1))
     if ((brightness > max_brightness)); then brightness=$max_brightness; fi
     echo "$brightness" > /sys/class/backlight/intel_backlight/brightness
     . "$(dirname "$0")"/signal.bash $signal
