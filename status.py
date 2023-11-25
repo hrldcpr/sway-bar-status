@@ -68,7 +68,7 @@ async def power_updater(statuses):
 
 async def main():
     # write pid file:
-    with open(f"/run/user/{os.getuid()}/sway-bar-status.pid", "w") as f:
+    with open(f'{os.environ["XDG_RUNTIME_DIR"]}/sway-bar-status.pid', "w") as f:
         f.write(str(os.getpid()))
 
     # initial values:
