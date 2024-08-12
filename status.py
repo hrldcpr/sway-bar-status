@@ -12,9 +12,8 @@ HERE = os.path.dirname(__file__)
 COMMANDS = (
     # if reordering these, update signal ids accordingly
     (rf"bash {HERE}/volume.bash", " volume - "),
-    (rf"bash {HERE}/brightness.bash", "% brightness - "),
-    (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " "),
-    (r"cat /sys/class/power_supply/BAT0/capacity", "% - "),
+    (rf"bash {HERE}/brightness.bash", "% brightness "),
+    (rf"bash {HERE}/battery.bash", " "),
     (r"cut -d' ' -f1 /proc/loadavg", " load - "),
     (r"cat /sys/firmware/acpi/platform_profile", " mode - "),
     (r"date +'%m/%d %-I:%M%P'", " "),
@@ -55,15 +54,10 @@ async def power_updater(statuses):
     # update power periodically
     # TODO get a signal when charger is (un)plugged?
     # TODO get a signal when Fn+L/M/H are pressed?
-    ixs = tuple(
-        i
-        for i, (command, _) in enumerate(COMMANDS)
-        if "/power_supply/" in command or "/acpi/" in command or "/load" in command
-    )
+    (i,) = (i for i, (command, _) in enumerate(COMMANDS) if "battery" in command)
     while True:
         await asyncio.sleep(POWER_PERIOD)
-        for i in ixs:
-            update(statuses, i, silent=True)
+        update(statuses, i, silent=True)
         print_status(statuses)
 
 
