@@ -9,6 +9,9 @@ step=$((max_brightness / 10)) # 10%
 
 brightness=$(cat /sys/class/backlight/intel_backlight/brightness)
 
+# sway config runs this file with "down" or "up" arguments when brightness buttons are pressed
+# and status.py runs this with no arguments to get current brightness:
+
 if [ "$1" = "down" ]; then
     brightness=$((brightness - step))
     if ((brightness < min_brightness)); then brightness=$min_brightness; fi

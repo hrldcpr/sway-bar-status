@@ -10,6 +10,7 @@ import subprocess
 HERE = os.path.dirname(__file__)
 
 COMMANDS = (
+    # if reordering these, update signal ids accordingly
     (rf"bash {HERE}/volume.bash", " volume - "),
     (rf"bash {HERE}/brightness.bash", "% brightness - "),
     (r"cat /sys/class/power_supply/BAT0/status | tr A-Z a-z", " "),
