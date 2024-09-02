@@ -54,10 +54,15 @@ async def power_updater(statuses):
     # update power periodically
     # TODO get a signal when charger is (un)plugged?
     # TODO get a signal when Fn+L/M/H are pressed?
-    (i,) = (i for i, (command, _) in enumerate(COMMANDS) if "battery" in command)
+    ixs = tuple(
+        i
+        for i, (command, _) in enumerate(COMMANDS)
+        if "/battery" in command or "/acpi/" in command or "/load" in command
+    )
     while True:
         await asyncio.sleep(POWER_PERIOD)
-        update(statuses, i, silent=True)
+        for i in ixs:
+            update(statuses, i, silent=True)
         print_status(statuses)
 
 
