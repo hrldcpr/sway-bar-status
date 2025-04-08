@@ -5,7 +5,7 @@ signal=2 # see status.py
 
 min_brightness=0
 max_brightness=$(cat /sys/class/backlight/intel_backlight/max_brightness)
-step=$((max_brightness / 10)) # 10%
+step=$((max_brightness / 20)) # 5%
 
 brightness=$(cat /sys/class/backlight/intel_backlight/brightness)
 
