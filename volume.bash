@@ -4,13 +4,11 @@ signal=1 # see status.py
 # and status.py runs this with no arguments to get current volume:
 
 if [ "$1" = "down" ]; then
-    # right speaker is blown, so we only mess with left speaker:
-    pactl set-sink-volume @DEFAULT_SINK@ -5% -0%
+    pactl set-sink-volume @DEFAULT_SINK@ -5%
     . "$(dirname "$0")"/signal.bash $signal
 elif [ "$1" = "up" ]; then
     # TODO limit max volume to something reasonable (pavucontrol uses 99957 / 153% / 11.00 dB)
-    # right speaker is blown, so we only mess with left speaker:
-    pactl set-sink-volume @DEFAULT_SINK@ +5% +0%
+    pactl set-sink-volume @DEFAULT_SINK@ +5%
     . "$(dirname "$0")"/signal.bash $signal
 else
     pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+%' | head -1
